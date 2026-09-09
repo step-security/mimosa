@@ -1,0 +1,120 @@
+name: Mimosa GitHub Action Example
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  example-github-action:
+    name: "Registry-based caching example"
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup mimosa
+        id: setup-mimosa
+        uses: step-security/mimosa/gh/setup-action@v0
+        with:
+          version: v0.1.2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::947281064882:role/mimosa-github-actions-role
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: step-security/amazon-ecr-login@v2
+
+      - name: Login to Docker Hub
+        uses: step-security/docker-login-action@v4
+        with:
+          username: hytromo
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Retag-only check (Docker Hub)
+        id: retag-dockerhub
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          mimosa-retag-only: true
+          context: &mimosa_context docs/gh-actions/actions-example
+          platforms: &mimosa_platforms linux/amd64,linux/arm64
+          push: true
+          tags: step-security/mimosa-testing:recommended-example-${{ github.sha }}
+
+      - name: Retag-only check (ECR)
+        id: retag-ecr
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          mimosa-retag-only: true
+          context: *mimosa_context
+          platforms: *mimosa_platforms
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/mimosa-testing:recommended-example-${{ github.sha }}
+
+      - name: Set up QEMU
+        if: steps.retag-dockerhub.outputs.mimosa-cache-hit != 'true' || steps.retag-ecr.outputs.mimosa-cache-hit != 'true'
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        if: steps.retag-dockerhub.outputs.mimosa-cache-hit != 'true' || steps.retag-ecr.outputs.mimosa-cache-hit != 'true'
+        uses: step-security/setup-buildx-action@v4
+
+      - name: Prepare build context
+        if: steps.retag-dockerhub.outputs.mimosa-cache-hit != 'true' || steps.retag-ecr.outputs.mimosa-cache-hit != 'true'
+        working-directory: docs/gh-actions/actions-example
+        run: |
+          echo $RANDOM > to-ignore.txt
+          echo "${{ github.sha }}-${RANDOM}-$(date)" > useful.txt
+
+      - name: Build and push to Docker Hub
+        id: build-dockerhub
+        if: steps.retag-dockerhub.outputs.mimosa-cache-hit != 'true'
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          context: *mimosa_context
+          platforms: *mimosa_platforms
+          push: true
+          tags: step-security/mimosa-testing:recommended-example-${{ github.sha }}
+
+      - name: Build and push to ECR
+        id: build-ecr
+        if: steps.retag-ecr.outputs.mimosa-cache-hit != 'true'
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          context: *mimosa_context
+          platforms: *mimosa_platforms
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/mimosa-testing:recommended-example-${{ github.sha }}
+
+      ### That's it! - the next steps are just proving that the cache is working - you DO NOT need to include them in your typical workflow
+      - name: Prepare build context for cache verification
+        working-directory: docs/gh-actions/actions-example
+        run: |
+          # Change an ignored file - this should NOT affect the hash
+          echo $RANDOM > to-ignore.txt
+
+      - name: Build and push to Docker Hub (cache verification)
+        id: build-dockerhub-cache-hit
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          context: *mimosa_context
+          platforms: *mimosa_platforms
+          push: true
+          tags: step-security/mimosa-testing:recommended-example-cache-hit-${{ github.sha }}
+
+      - name: Build and push to ECR (cache verification)
+        id: build-ecr-cache-hit
+        uses: step-security/mimosa/gh/build-push-action@v0
+        with:
+          context: *mimosa_context
+          platforms: *mimosa_platforms
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/mimosa-testing:recommended-example-cache-hit-${{ github.sha }}
