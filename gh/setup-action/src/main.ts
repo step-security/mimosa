@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import toolCache from '@actions/tool-cache'
 import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods'
+import * as crypto from 'node:crypto'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { validateSubscription } from './subscription.js'
@@ -34,6 +35,62 @@ async function getLatestVersion(): Promise<string> {
 
   const json = (await res.json()) as LatestReleaseResponse
   return json.tag_name.replaceAll('v', '').trim()
+}
+
+async function verifyChecksum(
+  downloadPath: string,
+  version: string,
+  os: string,
+  arch: string
+): Promise<void> {
+  const tarballName = `mimosa_${version}_${os}_${arch}.tar.gz`
+  const checksumUrl = `https://github.com/hytromo/mimosa/releases/download/v${version}/mimosa_${version}_checksums.txt`
+
+  let checksumText: string
+  try {
+    const res = await fetch(checksumUrl, {
+      headers: { 'User-Agent': 'mimosa-downloader' }
+    })
+    if (!res.ok) {
+      core.info(
+        `Checksum file not found (HTTP ${res.status}), skipping integrity verification`
+      )
+      return
+    }
+    checksumText = await res.text()
+  } catch (e) {
+    core.info(
+      `Could not fetch checksum file: ${e instanceof Error ? e.message : e}, skipping integrity verification`
+    )
+    return
+  }
+
+  // sha256sum format: "<hash>  <filename>"
+  const expectedHash = checksumText
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.endsWith(tarballName))
+    .map((line) => line.split(/\s+/)[0])[0]
+
+  if (!expectedHash) {
+    core.info(
+      `No checksum entry found for ${tarballName}, skipping integrity verification`
+    )
+    return
+  }
+
+  const actualHash = crypto
+    .createHash('sha256')
+    .update(fs.readFileSync(downloadPath))
+    .digest('hex')
+
+  if (actualHash !== expectedHash) {
+    throw new Error(
+      `Checksum mismatch for ${tarballName}: expected ${expectedHash}, got ${actualHash}`
+    )
+  }
+
+  core.info(`Checksum verified: ${tarballName} (sha256: ${expectedHash})`)
 }
 
 export async function run(): Promise<void> {
@@ -96,6 +153,8 @@ export async function run(): Promise<void> {
 
       core.info(`Downloading ${downloadUrl}`)
       const downloadPath = await toolCache.downloadTool(downloadUrl)
+
+      await verifyChecksum(downloadPath, version, runner.os, runner.arch)
 
       const extractPath = await toolCache.extractTar(downloadPath)
       core.info(`Extracted to ${extractPath}`)

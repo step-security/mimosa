@@ -25,6 +25,7 @@ import require$$6 from 'string_decoder';
 import require$$0$7 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
+import * as crypto from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import require$$1$5 from 'tty';
@@ -54143,6 +54144,43 @@ async function getLatestVersion() {
     const json = (await res.json());
     return json.tag_name.replaceAll('v', '').trim();
 }
+async function verifyChecksum(downloadPath, version, os, arch) {
+    const tarballName = `mimosa_${version}_${os}_${arch}.tar.gz`;
+    const checksumUrl = `https://github.com/hytromo/mimosa/releases/download/v${version}/mimosa_${version}_checksums.txt`;
+    let checksumText;
+    try {
+        const res = await fetch(checksumUrl, {
+            headers: { 'User-Agent': 'mimosa-downloader' }
+        });
+        if (!res.ok) {
+            coreExports.info(`Checksum file not found (HTTP ${res.status}), skipping integrity verification`);
+            return;
+        }
+        checksumText = await res.text();
+    }
+    catch (e) {
+        coreExports.info(`Could not fetch checksum file: ${e instanceof Error ? e.message : e}, skipping integrity verification`);
+        return;
+    }
+    // sha256sum format: "<hash>  <filename>"
+    const expectedHash = checksumText
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.endsWith(tarballName))
+        .map((line) => line.split(/\s+/)[0])[0];
+    if (!expectedHash) {
+        coreExports.info(`No checksum entry found for ${tarballName}, skipping integrity verification`);
+        return;
+    }
+    const actualHash = crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(downloadPath))
+        .digest('hex');
+    if (actualHash !== expectedHash) {
+        throw new Error(`Checksum mismatch for ${tarballName}: expected ${expectedHash}, got ${actualHash}`);
+    }
+    coreExports.info(`Checksum verified: ${tarballName} (sha256: ${expectedHash})`);
+}
 async function run() {
     try {
         await validateSubscription();
@@ -54191,6 +54229,7 @@ async function run() {
             const downloadUrl = `https://github.com/hytromo/mimosa/releases/download/v${version}/mimosa_${version}_${runner.os}_${runner.arch}.tar.gz`;
             coreExports.info(`Downloading ${downloadUrl}`);
             const downloadPath = await toolCache.downloadTool(downloadUrl);
+            await verifyChecksum(downloadPath, version, runner.os, runner.arch);
             const extractPath = await toolCache.extractTar(downloadPath);
             coreExports.info(`Extracted to ${extractPath}`);
             const binaryPathInExtract = path.join(extractPath, binaryFileName);
