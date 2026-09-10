@@ -18,6 +18,10 @@ on:
         description: "Node.js version"
         required: false
         default: "24"
+      yarn_version:
+        description: "Yarn version (e.g., 4.15.0)"
+        required: false
+        default: "4.15.0"
 
 permissions:
   contents: read
@@ -34,3 +38,4 @@ jobs:
       working_directory: "${{ inputs.working_directory }}"
       script: "${{ inputs.script }}"
       node_version: "${{ inputs.node_version }}"
+      yarn_version: "${{ inputs.yarn_version }}"
