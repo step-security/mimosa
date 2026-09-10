@@ -1,17 +1,17 @@
 {
   "name": "mimosa-setup-action",
   "description": "GitHub Action for setting up Mimosa",
-  "version": "0.0.0",
-  "author": "",
+  "version": "0.2.4",
+  "author": "step-security",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/hytromo/mimosa/tree/main/gh/setup-action",
+  "homepage": "https://github.com/step-security/mimosa/tree/main/gh/setup-action",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hytromo/mimosa.git"
+    "url": "git+https://github.com/step-security/mimosa.git"
   },
   "bugs": {
-    "url": "https://github.com/hytromo/mimosa/issues"
+    "url": "https://github.com/step-security/mimosa/issues"
   },
   "keywords": [
     "actions"

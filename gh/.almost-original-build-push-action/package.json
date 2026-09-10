@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/docker/build-push-action.git"
+    "url": "git+https://github.com/step-security/mimosa.git"
   },
   "keywords": [
     "actions",
@@ -20,7 +20,7 @@
     "build",
     "push"
   ],
-  "author": "Docker Inc.",
+  "author": "step-security",
   "license": "Apache-2.0",
   "packageManager": "yarn@4.15.0",
   "dependencies": {
