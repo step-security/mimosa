@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /docs/gh-actions/actions-example
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /gh/.almost-original-build-push-action
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /gh/setup-action
+    schedule:
+      interval: daily
