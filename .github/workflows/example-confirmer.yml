@@ -1,0 +1,50 @@
+name: Confirm working example
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  example-github-action:
+    name: "Registry-based caching example"
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup mimosa
+        id: setup-mimosa
+        uses: ./gh/setup-action
+
+      - name: Login to GitHub Container Registry
+        uses: step-security/docker-login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: step-security/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: step-security/setup-buildx-action@v4
+
+      - name: Prepare build context
+        working-directory: docs/gh-actions/actions-example
+        run: |
+          echo "${{ github.sha }}-${RANDOM}-$(date)" > useful.txt
+
+      - name: Build and push to GHCR
+        uses: ./gh/build-push-action
+        with:
+          mimosa-setup-enabled: false
+          context: docs/gh-actions/actions-example
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/mimosa-testing:example-${{ github.sha }}

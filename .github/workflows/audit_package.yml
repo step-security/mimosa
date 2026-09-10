@@ -1,0 +1,48 @@
+name: Yarn Audit Fix Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Use --force flag for npm audit fix?"
+        required: true
+        type: boolean
+      base_branch:
+        description: "Specify a base branch"
+        required: false
+        default: "main"
+      script:
+        description: "Build script to run"
+        required: false
+        default: "yarn build"
+      node_version:
+        description: "Node.js version"
+        required: false
+        default: "24"
+  schedule:
+    - cron: "0 0 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: read
+  issues: write
+
+jobs:
+  audit-fix:
+    strategy:
+      matrix:
+        include:
+          - working_directory: "gh/setup-action"
+            yarn_version: "4.15.0"
+          - working_directory: "gh/.almost-original-build-push-action"
+            yarn_version: "4.15.0"
+    uses: step-security/reusable-workflows/.github/workflows/audit_fix.yml@v1
+    with:
+      package_manager: yarn
+      yarn_version: ${{ matrix.yarn_version }}
+      working_directory: ${{ matrix.working_directory }}
+      script: ${{ inputs.script || 'yarn build' }}
+      node_version: ${{ inputs.node_version || '24' }}
+      force: ${{ inputs.force || false }}
+      base_branch: ${{ inputs.base_branch || 'main' }}
