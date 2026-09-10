@@ -1,0 +1,55 @@
+[[IgnoredVulns]]
+id = "GHSA-23hp-3jrh-7fpw"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-34x7-hfp2-rc4v"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-83g3-92jg-28cx"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-8qq5-rm4j-mr97"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-8x88-c5mf-7j5w"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-9ppj-qmqm-q256"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-gvwx-54wh-qm9j"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-qffp-2rhf-9h96"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-r292-9mhp-454m"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-r6q2-hw4h-h46w"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-vmf3-w455-68vh"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-w8wr-v893-vjvp"
+reason = "tar@6.2.1 is a dev/build-time dep via fsevents→node-gyp; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-mwp4-54f8-5fhr"
+reason = "ip-address@9.0.5 is a dev/build-time dep via generate-license-file→@npmcli/arborist→make-fetch-happen→@npmcli/agent→socks-proxy-agent→socks; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"
+
+[[IgnoredVulns]]
+id = "GHSA-v2v4-37r5-5v8g"
+reason = "ip-address@9.0.5 is a dev/build-time dep via generate-license-file→@npmcli/arborist→make-fetch-happen→@npmcli/agent→socks-proxy-agent→socks; not imported by the action source and not present in the esbuild-bundled dist/index.cjs that runs in production"

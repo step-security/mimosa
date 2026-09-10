@@ -18,7 +18,12 @@ const config = {
     nodeResolve({ preferBuiltins: true }),
     commonjs(),
     json()
-  ]
+  ],
+  onwarn(warning, warn) {
+    // Known circular dep inside @actions/core (oidc-utils ↔ core); harmless in bundle
+    if (warning.code === 'CIRCULAR_DEPENDENCY') return
+    warn(warning)
+  }
 }
 
 export default config
