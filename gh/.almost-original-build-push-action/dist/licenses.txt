@@ -1792,7 +1792,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - js-yaml@5.2.0
+ - js-yaml@5.4.1
 
 This package contains the following license:
 
@@ -2155,7 +2155,7 @@ software or this license, under any kind of legal claim.***
 The following npm packages may be included in this product:
 
  - jackspeak@3.4.3
- - minimatch@10.2.5
+ - minimatch@10.2.6
 
 These packages each contain the following license:
 
@@ -2712,7 +2712,7 @@ END OF TERMS AND CONDITIONS
 
 The following npm package may be included in this product:
 
- - @sigstore/verify@4.1.0
+ - @sigstore/verify@4.1.2
 
 This package contains the following license:
 
@@ -3499,8 +3499,8 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - brace-expansion@1.1.13
- - brace-expansion@2.0.2
+ - brace-expansion@1.1.18
+ - brace-expansion@2.1.4
 
 These packages each contain the following license:
 
@@ -4189,7 +4189,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm package may be included in this product:
 
- - undici@6.27.0
+ - undici@6.28.1
 
 This package contains the following license:
 
@@ -4269,7 +4269,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm package may be included in this product:
 
- - brace-expansion@5.0.6
+ - brace-expansion@5.0.9
 
 This package contains the following license:
 
@@ -4531,7 +4531,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - minimatch@5.1.6
+ - minimatch@5.1.9
  - minimatch@9.0.9
 
 These packages each contain the following license:
@@ -4805,7 +4805,7 @@ THE SOFTWARE.
 
 The following npm package may be included in this product:
 
- - csv-parse@7.0.0
+ - csv-parse@7.0.2
 
 This package contains the following license:
 
